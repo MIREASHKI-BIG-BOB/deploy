@@ -1,0 +1,9 @@
+[submodule "services/backend_gen"]
+	path = services/backend_gen
+	url = git@github.com:MIREASHKI-BIG-BOB/backend_gen.git
+[submodule "services/backend_main"]
+	path = services/backend_main
+	url = git@github.com:MIREASHKI-BIG-BOB/backend_main.git
+[submodule "services/backend_ml"]
+	path = services/backend_ml
+	url = git@github.com:MIREASHKI-BIG-BOB/backend_ml.git

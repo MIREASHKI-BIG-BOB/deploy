@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  gen-1:
+    build: ../services/backend_gen
+    env_file:
+      - .env.gen1
+    ports:
+      - "8001:8000"
+    networks:
+      - microservices
+    depends_on:
+      main:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  main:
+    build: ../services/backend_main
+    env_file:
+      - .env.main
+    ports:
+      - "8000:8000"
+    networks:
+      - microservices
+    depends_on:
+      ml:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  ml:
+    build: ../services/backend_ml
+    env_file:
+      - .env.ml
+    ports:
+      - "8010:8000"
+    networks:
+      - microservices
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c 'cat < /dev/null > /dev/tcp/localhost/8000' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  microservices:
+    driver: bridge
