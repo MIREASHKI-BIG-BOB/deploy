@@ -7,3 +7,6 @@
 [submodule "services/backend_ml"]
 	path = services/backend_ml
 	url = git@github.com:MIREASHKI-BIG-BOB/backend_ml.git
+[submodule "services/frontend"]
+	path = services/frontend
+	url = git@github.com:MIREASHKI-BIG-BOB/frontend.git
