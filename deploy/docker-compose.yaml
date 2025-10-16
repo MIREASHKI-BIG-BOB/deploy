@@ -1,23 +1,4 @@
 services:
-  # Автоматическая активация генератора
-  gen-activator:
-    image: curlimages/curl:latest
-    networks:
-      - microservices
-    depends_on:
-      gen-1:
-        condition: service_healthy
-    command: >
-      sh -c "
-        echo 'Waiting for generator to be ready...' &&
-        sleep 10 &&
-        echo 'Activating generator...' &&
-        curl -f -X GET http://gen-1:8000/api/on &&
-        echo 'Generator activated successfully!' ||
-        echo 'Failed to activate generator'
-      "
-    restart: "no"
-
   gen-1:
     build: ../services/backend_gen
     env_file:
@@ -30,7 +11,11 @@ services:
       main:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8000/api/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8000/api/health || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -48,7 +33,11 @@ services:
       ml:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8000/api/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8000/api/health || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -63,14 +52,18 @@ services:
     networks:
       - microservices
     healthcheck:
-      test: ["CMD-SHELL", "timeout 1 bash -c 'cat < /dev/null > /dev/tcp/localhost/8000' || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "timeout 1 bash -c 'cat < /dev/null > /dev/tcp/localhost/8000' || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
 
   frontend:
-    build: ../../frontend
+    build: ../services/frontend
     ports:
       - "3000:80"
     networks:
@@ -79,7 +72,11 @@ services:
       main:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
